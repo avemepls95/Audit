@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.SandBox", "School.SandBox\School.SandBox.csproj", "{4F5F7ACB-D053-4FA2-A962-F1E11653C21E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit", "School.Audit\School.Audit.csproj", "{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F5F7ACB-D053-4FA2-A962-F1E11653C21E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F5F7ACB-D053-4FA2-A962-F1E11653C21E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F5F7ACB-D053-4FA2-A962-F1E11653C21E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F5F7ACB-D053-4FA2-A962-F1E11653C21E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

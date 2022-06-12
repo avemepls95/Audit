@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using School.Audit.Abstractions;
 using School.Audit.AuditConfig;
+using School.Audit.AuditConfig.Abstractions;
 
 namespace School.Audit
 {

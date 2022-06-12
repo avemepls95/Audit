@@ -1,6 +1,6 @@
 ﻿using School.Audit.Abstractions;
 
-namespace School.Audit.AuditConfig
+namespace School.Audit.AuditConfig.Abstractions
 {
     public interface IAuditableTypesBuilder
     {

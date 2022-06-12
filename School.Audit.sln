@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.SandBox", "School.Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit", "School.Audit\School.Audit.csproj", "{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit.Db", "School.Audit.Db\School.Audit.Db.csproj", "{481CF35B-3C43-406C-B4DC-4062CEFC3E6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25DB1AF2-8471-4B66-9A2D-D5322FB3165D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{481CF35B-3C43-406C-B4DC-4062CEFC3E6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{481CF35B-3C43-406C-B4DC-4062CEFC3E6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{481CF35B-3C43-406C-B4DC-4062CEFC3E6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{481CF35B-3C43-406C-B4DC-4062CEFC3E6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

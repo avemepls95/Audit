@@ -1,15 +1,17 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using School.Audit.Abstractions;
 using School.Audit.AuditConfig;
+using School.Audit.Db.Implementation;
 
-namespace School.Audit
+namespace School.Audit.Db
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddAudit(
+        public static IServiceCollection AddDbAudit<TDbContext>(
             this IServiceCollection serviceCollection,
-            Action<IAuditableTypesBuilder> buildAuditableTypes)
+            Action<IAuditableTypesBuilder> buildAuditableTypes) where TDbContext : DbContext 
         {
             if (serviceCollection == null)
             {
@@ -21,12 +23,11 @@ namespace School.Audit
                 throw new ArgumentNullException(nameof(buildAuditableTypes));
             }
 
-            var builder = new AuditableTypesBuilder();
-            buildAuditableTypes.Invoke(builder);
+            serviceCollection.AddAudit(buildAuditableTypes);
 
-            serviceCollection.AddSingleton(builder.Types);
-            serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
-
+            serviceCollection.AddScoped<ISaveChangesCommand, SaveChangesCommand<TDbContext>>();
+            serviceCollection.AddScoped<IChangeTracker, ChangeTracker<TDbContext>>();
+            
             return serviceCollection;
         }
     }  

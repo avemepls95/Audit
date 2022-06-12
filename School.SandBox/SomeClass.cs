@@ -1,10 +1,11 @@
 ﻿using System;
-using School.Audit;
+using School.Audit.Abstractions;
 
 namespace School.SandBox
 {
     public class SomeClass : IAuditable
     {
+        public Guid Id { get; set; } = Guid.NewGuid();
         public int IntType { get; set; }
         public string StringProperty { get; set; }
         public bool BoolProperty { get; set; }

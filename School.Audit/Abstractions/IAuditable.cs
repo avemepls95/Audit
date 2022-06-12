@@ -1,4 +1,4 @@
-﻿namespace School.Audit
+﻿namespace School.Audit.Abstractions
 {
     public interface IAuditable
     {

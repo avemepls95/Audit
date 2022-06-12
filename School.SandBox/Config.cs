@@ -11,10 +11,11 @@ namespace School.SandBox
 
         public static IServiceCollection AddDbContext(this IServiceCollection services, string connectionString)
         {
-            var contentDatabaseOptions = new DbContextOptionsBuilder<DbContext>()
+            var contentDatabaseOptions = new DbContextOptionsBuilder<MyDbContext>()
                 .UseLoggerFactory(MyLoggerFactory)
                 .UseNpgsql(connectionString).Options;
             services.AddSingleton(contentDatabaseOptions);
+            services.AddDbContext<MyDbContext>();
 
             return services;
         }

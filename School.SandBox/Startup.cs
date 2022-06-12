@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using School.Audit;
+using School.Audit.Db;
 
 namespace School.SandBox
 {
@@ -19,16 +18,25 @@ namespace School.SandBox
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAudit(builder =>
+            services.AddControllers();
+            
+            var contextConnectionString = _configuration.GetConnectionString("DbConnection");
+            services.AddDbAudit<MyDbContext>(builder =>
             {
-                builder.Add<SomeClass>(
-                    c => c.BoolProperty,
-                    c => c.StringProperty,
-                    c => c.DateTimeProperty,
-                    c => c.IntType);
+                builder
+                    .Add<SomeClass>(nameof(SomeClass.Id))
+                    .AddProperties(
+                        nameof(SomeClass.BoolProperty),
+                        nameof(SomeClass.IntType),
+                        nameof(SomeClass.StringProperty),
+                        nameof(SomeClass.DateTimeProperty)
+                    );
+                
+                builder
+                    .Add<AnotherClass>(nameof(AnotherClass.Id))
+                    .AddProperties(nameof(AnotherClass.Lol));
             });
             
-            var contextConnectionString = _configuration.GetConnectionString("SchoolConnection");
             services.AddDbContext(contextConnectionString);
         }
 
@@ -42,10 +50,7 @@ namespace School.SandBox
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }

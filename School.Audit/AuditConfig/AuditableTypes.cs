@@ -36,6 +36,11 @@ namespace School.Audit.AuditConfig
         {
             return _items.First(i => i.Type == auditableEntityType);
         }
+        
+        public AuditableEntityMetaData Get<T>()
+        {
+            return _items.First(i => i.Type == typeof(T));
+        }
 
         public bool TryGet(Type auditableEntityType, out AuditableEntityMetaData auditableEntityMetaData)
         {

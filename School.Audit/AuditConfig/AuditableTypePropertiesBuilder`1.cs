@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using School.Audit.Abstractions;
+
 using School.Audit.AuditConfig.Abstractions;
 
 namespace School.Audit.AuditConfig
 {
-    internal class AuditableTypePropertiesBuilder<T> : IAuditableTypePropertiesBuilder<T> where T : IAuditable
+    internal class AuditableTypePropertiesBuilder<T> : IAuditableTypePropertiesBuilder<T> where T : class
     {
         private readonly Type[] _allowPropertyTypes = 
         {
@@ -26,12 +26,17 @@ namespace School.Audit.AuditConfig
         
         public void AddProperties(params string[] propertyNames)
         {
+            if (propertyNames.Length != propertyNames.Distinct().Count())
+            {
+                throw new ArgumentException("Duplicate property names found.");
+            }
+            
             var allObjectProperties = typeof(T).GetProperties();
             var objectPropertyNames = allObjectProperties.Select(p => p.Name);
-            var invalidNames = propertyNames.Where(name => !objectPropertyNames.Contains(name));
+            var invalidNames = propertyNames.Where(name => !objectPropertyNames.Contains(name)).ToArray();
             if (invalidNames.Any())
             {
-                throw new ArgumentException($"Invalid property names: {string.Join("", "", invalidNames)}");
+                throw new ArgumentException($"Invalid property names: {string.Join(", ", invalidNames)}");
             }
 
             foreach (var propertyName in propertyNames)
@@ -47,6 +52,11 @@ namespace School.Audit.AuditConfig
 
             var allPropertyNames = _auditableEntityMetaData.PropertyNames?.ToList() ?? new List<string>();
             allPropertyNames.AddRange(propertyNames);
+            
+            if (allPropertyNames.Contains(_auditableEntityMetaData.KeyPropertyName))
+            {
+                allPropertyNames.Remove(_auditableEntityMetaData.KeyPropertyName);
+            }
             
             _auditableEntityMetaData.PropertyNames = allPropertyNames.ToArray();
         }

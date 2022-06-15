@@ -20,10 +20,5 @@ namespace School.SandBox
 
             modelBuilder.ApplyConfiguration(new DbAuditConfiguration());
         }
-
-        public DbContext Get()
-        {
-            return this;
-        }
     }
 }

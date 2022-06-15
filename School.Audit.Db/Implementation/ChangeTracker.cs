@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using School.Audit.Abstractions;
 using School.Audit.AuditConfig;
 using School.Audit.Models;
@@ -21,7 +22,15 @@ namespace School.Audit.Db.Implementation
 
         public bool IsAnyChanges()
         {
-            return _dbContext.ChangeTracker.HasChanges();
+            if (!_dbContext.ChangeTracker.AutoDetectChangesEnabled)
+            {
+                _dbContext.ChangeTracker.DetectChanges();
+            }
+            
+            var changedAuditableEntriesCount = _dbContext.ChangeTracker.Entries()
+                .Count(e => _auditableTypes.Contains(e.Entity.GetType()));
+
+            return changedAuditableEntriesCount != 0;
         }
 
         public AuditItem[] GetChanges()
@@ -30,24 +39,16 @@ namespace School.Audit.Db.Implementation
             {
                 return Array.Empty<AuditItem>();
             }
-
-            if (!_dbContext.ChangeTracker.AutoDetectChangesEnabled)
-            {
-                _dbContext.ChangeTracker.DetectChanges();
-            }
             
             var changedAuditableEntries = _dbContext.ChangeTracker.Entries()
-                .Where(e => e.Entity is IAuditable)
+                .Where(e => _auditableTypes.Contains(e.Entity.GetType()))
                 .ToArray();
 
             var auditItems = new List<AuditItem>();
             foreach (var changedEntry in changedAuditableEntries)
             {
                 var auditableType = changedEntry.Entity.GetType();
-                if (!_auditableTypes.TryGet(auditableType, out var auditableEntityMetaData))
-                {
-                    continue;
-                }
+                var auditableEntityMetaData = _auditableTypes.Get(auditableType);
                 
                 var operationType = changedEntry.State switch
                 {
@@ -72,42 +73,62 @@ namespace School.Audit.Db.Implementation
                     continue;
                 }
 
-                var changedProperties = changedEntry.OriginalValues.Properties
-                    .Where(p => auditableEntityMetaData.PropertyNames.Contains(p.Name))
-                    .ToArray();
+                var auditItemsFromChangedProperties = GetAuditItemsFromChangedProperties(
+                    changedEntry,
+                    auditableEntityMetaData,
+                    auditableType,
+                    keyPropertyValue,
+                    operationType);
                 
-                foreach (var changedProperty in changedProperties)
-                {
-                    var oldValue = changedEntry.Property(changedProperty.Name).OriginalValue;
-                    var newValue = changedEntry.Property(changedProperty.Name).CurrentValue;
-                    if (oldValue.Equals(newValue))
-                    {
-                        continue;
-                    }
-                    
-                    var newAuditItem = new AuditItem
-                    {
-                        TargetType = auditableType.ToString(),
-                        KeyPropertyValue = keyPropertyValue.ToString(),
-                        ChangedPropertyName = changedProperty.Name,
-                        NewValue = newValue.ToString(),
-                        Date = DateTimeOffset.Now
-                    };
-                    auditItems.Add(newAuditItem);
-                    
-                    if (operationType == OperationType.Create)
-                    {
-                        newAuditItem.OperationType = OperationType.Create;
-                    }
-                    else
-                    {
-                        newAuditItem.OldValue = oldValue.ToString();
-                        newAuditItem.OperationType = OperationType.Modify;
-                    }
-                }
+                auditItems.AddRange(auditItemsFromChangedProperties);
             }
             
             return auditItems.ToArray();
+        }
+
+        private static AuditItem[] GetAuditItemsFromChangedProperties(
+            EntityEntry changedEntry,
+            AuditableEntityMetaData auditableEntityMetaData,
+            Type auditableType,
+            object keyPropertyValue,
+            OperationType operationType)
+        {
+            var auditableProperties = changedEntry.OriginalValues.Properties
+                .Where(p => auditableEntityMetaData.PropertyNames.Contains(p.Name))
+                .ToArray();
+
+            var result = new List<AuditItem>();
+            foreach (var changedProperty in auditableProperties)
+            {
+                var oldValue = changedEntry.Property(changedProperty.Name).OriginalValue;
+                var newValue = changedEntry.Property(changedProperty.Name).CurrentValue;
+                if (oldValue.Equals(newValue) && operationType != OperationType.Create)
+                {
+                    continue;
+                }
+                    
+                var newAuditItem = new AuditItem
+                {
+                    TargetType = auditableType.ToString(),
+                    KeyPropertyValue = keyPropertyValue.ToString(),
+                    ChangedPropertyName = changedProperty.Name,
+                    NewValue = newValue.ToString(),
+                    Date = DateTimeOffset.Now
+                };
+                result.Add(newAuditItem);
+                    
+                if (operationType == OperationType.Create)
+                {
+                    newAuditItem.OperationType = OperationType.Create;
+                }
+                else
+                {
+                    newAuditItem.OldValue = oldValue.ToString();
+                    newAuditItem.OperationType = OperationType.Modify;
+                }
+            }
+
+            return result.ToArray();
         }
     }
 }

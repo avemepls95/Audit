@@ -1,5 +1,4 @@
 ﻿using System;
-using School.Audit.Abstractions;
 using School.Audit.AuditConfig.Abstractions;
 
 namespace School.Audit.AuditConfig
@@ -8,13 +7,13 @@ namespace School.Audit.AuditConfig
     {
         public AuditableTypes Types { get; } = new();
 
-        public IAuditableTypePropertiesBuilder<T> Add<T>(string keyPropertyName) where T : IAuditable
+        public IAuditableTypePropertiesBuilder<T> Add<T>(string keyPropertyName) where T : class
         {
             if (string.IsNullOrWhiteSpace(keyPropertyName))
             {
                 throw new ArgumentNullException(nameof(keyPropertyName));
             }
-            
+
             var type = typeof(T);
             if (Types.Contains(type))
             {
@@ -26,9 +25,9 @@ namespace School.Audit.AuditConfig
             {
                 throw new ArgumentException($"Property {keyPropertyName} is not contained in type {typeof(T)}");
             }
-            
+
             Types.Add(type, keyPropertyName);
-            
+
             return new AuditableTypePropertiesBuilder<T>(Types.Get(type));
         }
     }

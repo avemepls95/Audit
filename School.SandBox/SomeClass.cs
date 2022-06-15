@@ -1,9 +1,8 @@
 ﻿using System;
-using School.Audit.Abstractions;
 
 namespace School.SandBox
 {
-    public class SomeClass : IAuditable
+    public class SomeClass
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public int IntType { get; set; }

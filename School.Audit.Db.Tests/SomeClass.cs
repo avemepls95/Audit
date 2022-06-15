@@ -1,10 +1,11 @@
 ﻿using System;
+using School.Audit.Abstractions;
 
-namespace School.Audit.Tests
+namespace School.Audit._Db.Tests
 {
     public class SomeClass
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; } = Guid.NewGuid();
         
         public int IntProperty { get; set; }
         
@@ -13,7 +14,5 @@ namespace School.Audit.Tests
         public bool BoolProperty { get; set; }
         
         public DateTimeOffset DateTimeProperty { get; set; }
-
-        public AnotherClass AnotherClassObject { get; set; }
     }
 }

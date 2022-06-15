@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit.Db", "School.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit.Tests", "School.Audit.Tests\School.Audit.Tests.csproj", "{7304F832-D30D-4270-951B-BA2AA822D059}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit.Db.Tests", "School.Audit.Db.Tests\School.Audit.Db.Tests.csproj", "{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{7304F832-D30D-4270-951B-BA2AA822D059}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7304F832-D30D-4270-951B-BA2AA822D059}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7304F832-D30D-4270-951B-BA2AA822D059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

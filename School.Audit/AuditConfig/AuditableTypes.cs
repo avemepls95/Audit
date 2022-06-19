@@ -20,6 +20,22 @@ namespace School.Audit.AuditConfig
 
         public void Add(Type auditableEntityType, string keyPropertyName)
         {
+            if (string.IsNullOrWhiteSpace(keyPropertyName))
+            {
+                throw new ArgumentNullException(nameof(keyPropertyName));
+            }
+            
+            if (Contains(auditableEntityType))
+            {
+                throw new ArgumentException($"The type {auditableEntityType} already added.");
+            }
+            
+            var keyProperty = auditableEntityType.GetProperty(keyPropertyName);
+            if (keyProperty is null)
+            {
+                throw new ArgumentException($"Property {keyPropertyName} is not contained in type {auditableEntityType}");
+            }
+            
             if (Contains(auditableEntityType))
             {
                 throw new ArgumentException($"The type {auditableEntityType} already added.");
@@ -40,18 +56,6 @@ namespace School.Audit.AuditConfig
         public AuditableEntityMetaData Get<T>()
         {
             return _items.First(i => i.Type == typeof(T));
-        }
-
-        public bool TryGet(Type auditableEntityType, out AuditableEntityMetaData auditableEntityMetaData)
-        {
-            if (!Contains(auditableEntityType))
-            {
-                auditableEntityMetaData = null;
-                return false;
-            }
-
-            auditableEntityMetaData = Get(auditableEntityType);
-            return true;
         }
     }
 }

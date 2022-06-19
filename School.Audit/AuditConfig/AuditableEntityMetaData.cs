@@ -8,7 +8,7 @@ namespace School.Audit.AuditConfig
         
         public string KeyPropertyName { get; set; }
 
-        public string[] PropertyNames { get; set; }
+        public string[] PropertyNames { get; set; } = Array.Empty<string>();
 
         public bool Equals(AuditableEntityMetaData other)
         {

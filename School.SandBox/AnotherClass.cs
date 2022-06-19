@@ -6,5 +6,6 @@ namespace School.SandBox
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public int Lol { get; set; }
+        public int Kek { get; set; }
     }
 }

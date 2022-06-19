@@ -78,7 +78,84 @@ namespace School.Audit.Tests
 
             func.Should()
                 .Throw<ArgumentException>()
-                .Where(e => e.Message.Contains("supported"));
+                .Where(e => e.Message.Contains("invalid type"));
+        }
+        
+        [Fact]
+        public void AddPropertiesGeneric_ValidData_Ok()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            typesBuilder
+                .Add<SomeClass>(nameof(SomeClass.Id))
+                .AddProperties(
+                    c => c.BoolProperty,
+                    c => c.IntProperty,
+                    c => c.StringProperty,
+                    c => c.DateTimeProperty);
+
+            var propertyNames = typesBuilder.Types.Get<SomeClass>().PropertyNames;
+            propertyNames.Length.Should().Be(4);
+            propertyNames.Contains(nameof(SomeClass.BoolProperty)).Should().BeTrue();
+            propertyNames.Contains(nameof(SomeClass.StringProperty)).Should().BeTrue();
+            propertyNames.Contains(nameof(SomeClass.BoolProperty)).Should().BeTrue();
+            propertyNames.Contains(nameof(SomeClass.IntProperty)).Should().BeTrue();
+        }
+        
+        [Fact]
+        public void AddProperties_AddExistProperty_ShouldThrow()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            Action func = () => typePropertiesBuilder.AddProperties(
+                nameof(SomeClass.BoolProperty),
+                nameof(SomeClass.BoolProperty));
+
+            func.Should().Throw<ArgumentException>();
+        }
+        
+        [Fact]
+        public void AddProperties_AddNotProperty_ShouldThrow()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            Action func = () => typePropertiesBuilder.AddProperties(
+                nameof(SomeClass.BoolProperty),
+                nameof(GetType));
+
+            func.Should().Throw<ArgumentException>();
+        }
+        
+        [Fact]
+        public void AddProperty_ValidData_Ok()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            typePropertiesBuilder.AddProperty(c => c.IntProperty);
+
+            var propertyNames = typesBuilder.Types.Get<SomeClass>().PropertyNames;
+            propertyNames.Length.Should().Be(4);
+            propertyNames.Contains(nameof(SomeClass.BoolProperty)).Should().BeTrue();
+        }
+        
+        [Fact]
+        public void AddProperty_AddExistProperty_ShouldThrow()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            typePropertiesBuilder.AddProperty(c => c.IntProperty);
+            
+            Action func = () => typePropertiesBuilder.AddProperty(c => c.IntProperty);
+            func.Should().Throw<ArgumentException>();
+        }
+        
+        [Fact]
+        public void AddProperty_AddNotProperty_ShouldThrow()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            Action func = () => typePropertiesBuilder.AddProperty(c => c.GetType());
+
+            func.Should().Throw<ArgumentException>();
         }
     }
 }

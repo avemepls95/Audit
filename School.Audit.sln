@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit.Tests", "Schoo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Audit.Db.Tests", "School.Audit.Db.Tests\School.Audit.Db.Tests.csproj", "{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9C616C67-ACE5-42BB-8C69-F56C6A49E94B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B38E1158-09E9-43A4-BA5C-8C1E7914ED55} = {9C616C67-ACE5-42BB-8C69-F56C6A49E94B}
+		{7304F832-D30D-4270-951B-BA2AA822D059} = {9C616C67-ACE5-42BB-8C69-F56C6A49E94B}
 	EndGlobalSection
 EndGlobal

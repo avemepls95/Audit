@@ -23,18 +23,24 @@ namespace School.SandBox
             var contextConnectionString = _configuration.GetConnectionString("DbConnection");
             services.AddDbAudit<MyDbContext>(builder =>
             {
+                // builder
+                //     .Add<SomeClass>(nameof(SomeClass.Id))
+                //     .AddProperties(
+                //         nameof(SomeClass.BoolProperty),
+                //         nameof(SomeClass.IntType),
+                //         nameof(SomeClass.StringProperty),
+                //         nameof(SomeClass.DateTimeProperty)
+                //     );
+                
                 builder
-                    .Add<SomeClass>(nameof(SomeClass.Id))
-                    .AddProperties(
-                        nameof(SomeClass.BoolProperty),
-                        nameof(SomeClass.IntType),
-                        nameof(SomeClass.StringProperty),
-                        nameof(SomeClass.DateTimeProperty)
-                    );
+                    .Add<SomeClass>(c => c.GetInt())
+                    .AddProperty(c => c.BoolProperty);
                 
                 builder
                     .Add<AnotherClass>(nameof(AnotherClass.Id))
-                    .AddProperties(nameof(AnotherClass.Lol));
+                    .AddProperties(
+                        c => c.Lol,
+                        c => c.Kek);
             });
             
             services.AddDbContext(contextConnectionString);

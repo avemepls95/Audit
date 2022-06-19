@@ -9,5 +9,11 @@ namespace School.SandBox
         public string StringProperty { get; set; }
         public bool BoolProperty { get; set; }
         public DateTimeOffset DateTimeProperty { get; set; }
+        public AnotherClass  AnotherClassObject { get; set; }
+
+        public int GetInt()
+        {
+            return IntType;
+        }
     }
 }

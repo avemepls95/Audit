@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace School.SandBox
+namespace School.SandBox.Models
 {
     public class AnotherClass
     {

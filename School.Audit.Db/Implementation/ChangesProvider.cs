@@ -9,12 +9,12 @@ using School.Audit.Models;
 
 namespace School.Audit.Db.Implementation
 {
-    internal class ChangeTracker<TDbContext> : IChangeTracker where TDbContext : DbContext
+    internal class ChangesProvider<TDbContext> : IChangesProvider where TDbContext : DbContext
     {
         private readonly TDbContext _dbContext;
         private readonly AuditableTypes _auditableTypes;
 
-        public ChangeTracker(TDbContext dbContext, AuditableTypes auditableTypes)
+        public ChangesProvider(TDbContext dbContext, AuditableTypes auditableTypes)
         {
             _dbContext = dbContext;
             _auditableTypes = auditableTypes;
@@ -98,11 +98,12 @@ namespace School.Audit.Db.Implementation
                 .ToArray();
 
             var result = new List<AuditItem>();
-            foreach (var changedProperty in auditableProperties)
+            foreach (var auditableProperty in auditableProperties)
             {
-                var oldValue = changedEntry.Property(changedProperty.Name).OriginalValue;
-                var newValue = changedEntry.Property(changedProperty.Name).CurrentValue;
-                if (oldValue.Equals(newValue) && operationType != OperationType.Create)
+                var oldValue = changedEntry.Property(auditableProperty.Name).OriginalValue;
+                var newValue = changedEntry.Property(auditableProperty.Name).CurrentValue;
+                if ((oldValue == null && newValue == null)
+                    || (oldValue.Equals(newValue) && operationType != OperationType.Create))
                 {
                     continue;
                 }
@@ -111,7 +112,7 @@ namespace School.Audit.Db.Implementation
                 {
                     TargetType = auditableType.ToString(),
                     KeyPropertyValue = keyPropertyValue.ToString(),
-                    ChangedPropertyName = changedProperty.Name,
+                    ChangedPropertyName = auditableProperty.Name,
                     NewValue = newValue.ToString(),
                     Date = DateTimeOffset.Now
                 };

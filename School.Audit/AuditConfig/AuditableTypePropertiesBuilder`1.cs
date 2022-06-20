@@ -8,15 +8,6 @@ namespace School.Audit.AuditConfig
 {
     internal class AuditableTypePropertiesBuilder<T> : IAuditableTypePropertiesBuilder<T> where T : class
     {
-        private readonly Type[] _allowPropertyTypes = 
-        {
-            typeof(string),
-            typeof(Guid),
-            typeof(DateTime),
-            typeof(DateTimeOffset),
-            typeof(Enum)
-        };
-
         private readonly AuditableEntityMetaData _auditableEntityMetaData;
         
         public AuditableTypePropertiesBuilder(AuditableEntityMetaData auditableEntityMetaData)
@@ -42,13 +33,12 @@ namespace School.Audit.AuditConfig
             foreach (var propertyName in propertyNames)
             {
                 var propertyType = allObjectProperties.First(p => p.Name == propertyName).PropertyType;
-                if (propertyType.IsPrimitive || _allowPropertyTypes.Contains(propertyType))
+                if (propertyType.IsPrimitive || AllowPropertyTypes.IsValid(propertyType))
                 {
                     continue;
                 }
 
-                var supportedTypesAsString = string.Join(", ", _allowPropertyTypes.Select(t => t.ToString()));
-                throw new ArgumentException($"There are invalid type(s). Supported: {supportedTypesAsString}.");
+                throw new ArgumentException(AllowPropertyTypes.ErrorMessage);
             }
 
             var allPropertyNames = _auditableEntityMetaData.PropertyNames?.ToList() ?? new List<string>();
@@ -94,12 +84,14 @@ namespace School.Audit.AuditConfig
         
         public void AddAllProperties()
         {
-            var allPropertyNames = typeof(T).GetProperties()
-                .Where(p => _allowPropertyTypes.Contains(p.PropertyType))
+            var allPropertyNamesExcludeKey = typeof(T).GetProperties()
+                .Where(p =>
+                    AllowPropertyTypes.IsValid(p.PropertyType)
+                    && !p.Name.Equals(_auditableEntityMetaData.KeyPropertyName))
                 .Select(p => p.Name)
                 .ToArray();
 
-            AddProperties(allPropertyNames);
+            AddProperties(allPropertyNamesExcludeKey);
         }
 
         private void AddPropertyCore(MemberExpression memberExpression)

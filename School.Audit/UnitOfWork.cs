@@ -6,26 +6,26 @@ namespace School.Audit
 {
     internal sealed class UnitOfWork : IUnitOfWork
     {
-        private readonly IChangeTracker _changeTracker;
+        private readonly IChangesProvider _changesProvider;
         private readonly ISaveChangesCommand _saveChangesCommand;
 
         public UnitOfWork(
-            IChangeTracker changeTracker,
+            IChangesProvider changesProvider,
             ISaveChangesCommand saveChangesCommand)
         {
-            _changeTracker = changeTracker;
+            _changesProvider = changesProvider;
             _saveChangesCommand = saveChangesCommand;
         }
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
-            var isAnyChanges = _changeTracker.IsAnyChanges();
+            var isAnyChanges = _changesProvider.IsAnyChanges();
             if (!isAnyChanges)
             {
                 return;
             }
 
-            var changes = _changeTracker.GetChanges();
+            var changes = _changesProvider.GetChanges();
             
             await _saveChangesCommand.ExecuteAsync(changes, cancellationToken);
         }

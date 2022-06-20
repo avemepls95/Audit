@@ -26,7 +26,7 @@ namespace School.Audit.Db
             serviceCollection.AddAudit(buildAuditableTypes);
 
             serviceCollection.AddScoped<ISaveChangesCommand, SaveChangesCommand<TDbContext>>();
-            serviceCollection.AddScoped<IChangeTracker, ChangeTracker<TDbContext>>();
+            serviceCollection.AddScoped<IChangesProvider, ChangesProvider<TDbContext>>();
             
             return serviceCollection;
         }

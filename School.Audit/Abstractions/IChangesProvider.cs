@@ -5,7 +5,7 @@ namespace School.Audit.Abstractions
     /// <summary>
     /// Auditable entities change tracker.
     /// </summary>
-    public interface IChangeTracker
+    public interface IChangesProvider
     {
         /// <summary>
         /// Check whether any changes on auditable entities.

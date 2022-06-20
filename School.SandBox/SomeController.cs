@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School.Audit.Abstractions;
+using School.SandBox.Models;
 
 namespace School.SandBox
 {
@@ -23,10 +24,11 @@ namespace School.SandBox
         {
             var someObject = new SomeClass
             {
-                IntType = 1,
+                IntProperty = 1,
                 StringProperty = "test",
                 BoolProperty = false,
-                DateTimeProperty = DateTimeOffset.Now
+                DateTimeProperty = DateTimeOffset.Now,
+                EnumProperty = SomeEnum.B
             };
             
             var anotherObject = new AnotherClass()
@@ -34,8 +36,8 @@ namespace School.SandBox
                 Lol = 1,
             };
             
-            // await _dbContext.Set<SomeClass>().AddAsync(someObject, cancellationToken);
-            // await _dbContext.Set<AnotherClass>().AddAsync(anotherObject, cancellationToken);
+            await _dbContext.Set<SomeClass>().AddAsync(someObject, cancellationToken);
+            await _dbContext.Set<AnotherClass>().AddAsync(anotherObject, cancellationToken);
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }

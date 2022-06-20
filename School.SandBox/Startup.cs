@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using School.Audit.Db;
+using School.SandBox.Models;
 
 namespace School.SandBox
 {
@@ -23,18 +24,9 @@ namespace School.SandBox
             var contextConnectionString = _configuration.GetConnectionString("DbConnection");
             services.AddDbAudit<MyDbContext>(builder =>
             {
-                // builder
-                //     .Add<SomeClass>(nameof(SomeClass.Id))
-                //     .AddProperties(
-                //         nameof(SomeClass.BoolProperty),
-                //         nameof(SomeClass.IntType),
-                //         nameof(SomeClass.StringProperty),
-                //         nameof(SomeClass.DateTimeProperty)
-                //     );
-                
                 builder
-                    .Add<SomeClass>(c => c.GetInt())
-                    .AddProperty(c => c.BoolProperty);
+                    .Add<SomeClass>(c => c.Id)
+                    .AddAllProperties();
                 
                 builder
                     .Add<AnotherClass>(nameof(AnotherClass.Id))

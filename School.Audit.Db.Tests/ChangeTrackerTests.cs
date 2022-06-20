@@ -193,7 +193,7 @@ namespace School.Audit._Db.Tests
             item.Date.Should().NotBe(default);
         }
 
-        private ChangeTracker<DbContext> GetInstance(out TestDbContext dbContext)
+        private ChangesProvider<DbContext> GetInstance(out TestDbContext dbContext)
         {
             // Configure types
             var typesBuilder = new AuditableTypesBuilder();
@@ -212,7 +212,7 @@ namespace School.Audit._Db.Tests
             dbContext.Database.OpenConnection();
             dbContext.Database.EnsureCreated();
             
-            var instance = new ChangeTracker<DbContext>(dbContext, typesBuilder.Types);
+            var instance = new ChangesProvider<DbContext>(dbContext, typesBuilder.Types);
 
             return instance;
         }

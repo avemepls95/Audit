@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using School.Audit.Db;
+using School.SandBox.Models;
 
 namespace School.SandBox
 {

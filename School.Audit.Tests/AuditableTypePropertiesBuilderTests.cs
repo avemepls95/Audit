@@ -40,19 +40,19 @@ namespace School.Audit.Tests
 
             func.Should()
                 .Throw<ArgumentException>()
-                .Where(e => e.Message.Contains("Duplicate"));
+                .Where(e => e.Message.Contains("Duplicate", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]
-        public void AddProperties_AddIdProperty_ShouldNotAdd()
+        public void AddProperties_AddIdProperty_ShouldThrow()
         {
             var typesBuilder = new AuditableTypesBuilder();
-            typesBuilder
-                .Add<SomeClass>(nameof(SomeClass.Id))
-                .AddProperties(nameof(SomeClass.Id));
-
-            var propertyNames = typesBuilder.Types.Get<SomeClass>().PropertyNames;
-            propertyNames.Length.Should().Be(0);
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            Action func = () => typePropertiesBuilder.AddProperties(nameof(SomeClass.Id));
+            
+            func.Should()
+                .Throw<ArgumentException>()
+                .Where(e => e.Message.Contains("Key", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]
@@ -78,11 +78,11 @@ namespace School.Audit.Tests
 
             func.Should()
                 .Throw<ArgumentException>()
-                .Where(e => e.Message.Contains("invalid type"));
+                .Where(e => e.Message.Contains("invalid type", StringComparison.OrdinalIgnoreCase));
         }
         
         [Fact]
-        public void AddPropertiesGeneric_ValidData_Ok()
+        public void AddProperties_Generic_ValidData_Ok()
         {
             var typesBuilder = new AuditableTypesBuilder();
             typesBuilder
@@ -102,43 +102,51 @@ namespace School.Audit.Tests
         }
         
         [Fact]
-        public void AddProperties_AddExistProperty_ShouldThrow()
+        public void AddProperties_Generic_AddSamePropertyTwoTimes_ShouldThrow()
         {
             var typesBuilder = new AuditableTypesBuilder();
             var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
             Action func = () => typePropertiesBuilder.AddProperties(
-                nameof(SomeClass.BoolProperty),
-                nameof(SomeClass.BoolProperty));
+                c => c.BoolProperty,
+                c => c.BoolProperty);
 
             func.Should().Throw<ArgumentException>();
         }
         
         [Fact]
-        public void AddProperties_AddNotProperty_ShouldThrow()
+        public void AddProperties_Generic_AddNotProperty_ShouldThrow()
         {
             var typesBuilder = new AuditableTypesBuilder();
             var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
-            Action func = () => typePropertiesBuilder.AddProperties(
-                nameof(SomeClass.BoolProperty),
-                nameof(GetType));
+            Action func = () => typePropertiesBuilder.AddProperties(c => c.GetType());
 
             func.Should().Throw<ArgumentException>();
         }
         
         [Fact]
-        public void AddProperty_ValidData_Ok()
+        public void AddProperties_Generic_AddIdProperty_ShouldThrow()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            Action func = () => typePropertiesBuilder.AddProperties(c => c.Id);
+
+            func.Should().Throw<ArgumentException>().Where(e => e.Message.Contains("Key", StringComparison.OrdinalIgnoreCase));
+        }
+        
+        [Fact]
+        public void AddProperty_Generic_ValidData_Ok()
         {
             var typesBuilder = new AuditableTypesBuilder();
             var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
             typePropertiesBuilder.AddProperty(c => c.IntProperty);
 
             var propertyNames = typesBuilder.Types.Get<SomeClass>().PropertyNames;
-            propertyNames.Length.Should().Be(4);
-            propertyNames.Contains(nameof(SomeClass.BoolProperty)).Should().BeTrue();
+            propertyNames.Length.Should().Be(1);
+            propertyNames.Contains(nameof(SomeClass.IntProperty)).Should().BeTrue();
         }
         
         [Fact]
-        public void AddProperty_AddExistProperty_ShouldThrow()
+        public void AddProperty_Generic_AddSamePropertyTwoTimes_ShouldThrow()
         {
             var typesBuilder = new AuditableTypesBuilder();
             var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
@@ -149,13 +157,39 @@ namespace School.Audit.Tests
         }
         
         [Fact]
-        public void AddProperty_AddNotProperty_ShouldThrow()
+        public void AddProperty_Generic_AddNotProperty_ShouldThrow()
         {
             var typesBuilder = new AuditableTypesBuilder();
             var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
             Action func = () => typePropertiesBuilder.AddProperty(c => c.GetType());
 
             func.Should().Throw<ArgumentException>();
+        }
+        
+        [Fact]
+        public void AddProperty_Generic_AddIdProperty_ShouldThrow()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            var typePropertiesBuilder = typesBuilder.Add<SomeClass>(nameof(SomeClass.Id));
+            Action func = () => typePropertiesBuilder.AddProperty(c => c.Id);
+
+            func.Should().Throw<ArgumentException>().Where(e => e.Message.Contains("Key", StringComparison.OrdinalIgnoreCase));
+        }
+        
+        [Fact]
+        public void AddAllProperties_ValidData_Ok()
+        {
+            var typesBuilder = new AuditableTypesBuilder();
+            typesBuilder
+                .Add<SomeClass>(nameof(SomeClass.Id))
+                .AddAllProperties();
+
+            var propertyNames = typesBuilder.Types.Get<SomeClass>().PropertyNames;
+            propertyNames.Length.Should().Be(4);
+            propertyNames.Contains(nameof(SomeClass.BoolProperty)).Should().BeTrue();
+            propertyNames.Contains(nameof(SomeClass.StringProperty)).Should().BeTrue();
+            propertyNames.Contains(nameof(SomeClass.BoolProperty)).Should().BeTrue();
+            propertyNames.Contains(nameof(SomeClass.IntProperty)).Should().BeTrue();
         }
     }
 }

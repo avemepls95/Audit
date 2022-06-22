@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using School.Audit.Abstractions;
 using School.Audit.AuditConfig;
 using School.Audit.AuditConfig.Abstractions;
 
@@ -26,7 +25,6 @@ namespace School.Audit
             buildAuditableTypes.Invoke(builder);
 
             serviceCollection.AddSingleton(builder.Types);
-            serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return serviceCollection;
         }

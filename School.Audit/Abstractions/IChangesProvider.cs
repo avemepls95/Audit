@@ -3,19 +3,19 @@
 namespace School.Audit.Abstractions
 {
     /// <summary>
-    /// Auditable entities change tracker.
+    /// Трекер изменений.
     /// </summary>
     public interface IChangesProvider
     {
         /// <summary>
-        /// Check whether any changes on auditable entities.
+        /// Проверяет наличие изменений.
         /// </summary>
         bool IsAnyChanges();
 
         /// <summary>
-        /// Returns changes in auditable entities.
+        /// Возвращает все отслеживаемые изменения.
         /// </summary>
-        /// <returns>Array of <see cref="AuditItem"/></returns>
+        /// <returns>Список изменений <see cref="AuditItem"/></returns>
         AuditItem[] GetChanges();
     }
 }

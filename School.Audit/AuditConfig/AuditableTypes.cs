@@ -4,6 +4,12 @@ using System.Linq;
 
 namespace School.Audit.AuditConfig
 {
+    /// <summary>
+    /// Данные об аудируемых сущностях.  
+    /// </summary>
+    /// <remarks>
+    /// Класс для внутреннего использования. Впоследствии может измениться.
+    /// </remarks>
     public sealed class AuditableTypes
     {
         private readonly HashSet<AuditableEntityMetaData> _items;

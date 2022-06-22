@@ -2,6 +2,12 @@
 
 namespace School.Audit.AuditConfig
 {
+    /// <summary>
+    /// Данные об аудируемой сущности.  
+    /// </summary>
+    /// <remarks>
+    /// Класс для внутреннего использования. Впоследствии может измениться.
+    /// </remarks>
     public class AuditableEntityMetaData : IEquatable<AuditableEntityMetaData>
     {
         public Type Type { get; init; }

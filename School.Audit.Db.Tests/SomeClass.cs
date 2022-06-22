@@ -1,5 +1,4 @@
 ﻿using System;
-using School.Audit.Abstractions;
 
 namespace School.Audit._Db.Tests
 {
@@ -13,6 +12,16 @@ namespace School.Audit._Db.Tests
         
         public bool BoolProperty { get; set; }
         
+        public bool ConstantProperty { get; set; }
+        
         public DateTimeOffset DateTimeProperty { get; set; }
+        
+        public SomeEnum EnumProperty { get; set; }
+        
+        public DateTimeOffset? NullableDateTimeProperty { get; set; }
+
+        public SomeEnum? NullableEnumProperty { get; set; }
+        
+        public AnotherClass AnotherClassObject { get; set; }
     }
 }

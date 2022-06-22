@@ -97,13 +97,14 @@ namespace School.Audit.Db.Implementation
                 .Where(p => auditableEntityMetaData.PropertyNames.Contains(p.Name))
                 .ToArray();
 
+            var now = DateTimeOffset.Now;
+            
             var result = new List<AuditItem>();
             foreach (var auditableProperty in auditableProperties)
             {
                 var oldValue = changedEntry.Property(auditableProperty.Name).OriginalValue;
                 var newValue = changedEntry.Property(auditableProperty.Name).CurrentValue;
-                if ((oldValue == null && newValue == null)
-                    || (oldValue.Equals(newValue) && operationType != OperationType.Create))
+                if (ValuesAreEqual(oldValue, newValue) && operationType != OperationType.Create)
                 {
                     continue;
                 }
@@ -113,8 +114,8 @@ namespace School.Audit.Db.Implementation
                     TargetType = auditableType.ToString(),
                     KeyPropertyValue = keyPropertyValue.ToString(),
                     ChangedPropertyName = auditableProperty.Name,
-                    NewValue = newValue.ToString(),
-                    Date = DateTimeOffset.Now
+                    NewValue = newValue?.ToString(),
+                    Date = now
                 };
                 result.Add(newAuditItem);
                     
@@ -124,12 +125,27 @@ namespace School.Audit.Db.Implementation
                 }
                 else
                 {
-                    newAuditItem.OldValue = oldValue.ToString();
+                    newAuditItem.OldValue = oldValue?.ToString();
                     newAuditItem.OperationType = OperationType.Modify;
                 }
             }
 
             return result.ToArray();
+        }
+
+        private static bool ValuesAreEqual(object firstValue, object secondValue)
+        {
+            if (firstValue == null && secondValue == null)
+            {
+                return true;
+            }
+
+            if (firstValue == null || secondValue == null)
+            {
+                return false;
+            }
+
+            return firstValue.Equals(secondValue);
         }
     }
 }

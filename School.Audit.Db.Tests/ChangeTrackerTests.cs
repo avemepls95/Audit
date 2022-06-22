@@ -68,13 +68,19 @@ namespace School.Audit._Db.Tests
                 IntProperty = fixture.Create<int>(),
                 StringProperty = fixture.Create<string>(),
                 BoolProperty = fixture.Create<bool>(),
-                DateTimeProperty = fixture.Create<DateTimeOffset>()
+                ConstantProperty = fixture.Create<bool>(),
+                DateTimeProperty = fixture.Create<DateTimeOffset>(),
+                EnumProperty = SomeEnum.B,
+                NullableDateTimeProperty = null,
+                NullableEnumProperty = null,
+                AnotherClassObject = null,
             };
+            
             dbContext.Set<SomeClass>().Add(auditableObject);
 
             var changes = changeTracker.GetChanges();
             
-            changes.Length.Should().Be(4);
+            changes.Length.Should().Be(8);
             
             changes
                 .All(c =>
@@ -100,6 +106,24 @@ namespace School.Audit._Db.Tests
             changes.Should().ContainSingle(c =>
                 c.NewValue == auditableObject.DateTimeProperty.ToString()
                 && c.ChangedPropertyName == nameof(SomeClass.DateTimeProperty));
+            
+            changes.Should().ContainSingle(c =>
+                c.NewValue == auditableObject.EnumProperty.ToString()
+                && c.ChangedPropertyName == nameof(SomeClass.EnumProperty));
+
+            var newNullableDateTimePropertyValue = (auditableObject.NullableDateTimeProperty.HasValue
+                ? auditableObject.NullableDateTimeProperty.ToString()
+                : null);
+            changes.Should().ContainSingle(c =>
+                c.NewValue == newNullableDateTimePropertyValue
+                && c.ChangedPropertyName == nameof(SomeClass.NullableDateTimeProperty));
+            
+            var newNullableEnumPropertyValue = (auditableObject.NullableDateTimeProperty.HasValue
+                ? auditableObject.NullableDateTimeProperty.ToString()
+                : null);
+            changes.Should().ContainSingle(c =>
+                c.NewValue == newNullableEnumPropertyValue
+                && c.ChangedPropertyName == nameof(SomeClass.NullableEnumProperty));
         }
         
         [Fact]
@@ -112,7 +136,12 @@ namespace School.Audit._Db.Tests
                 IntProperty = fixture.Create<int>(),
                 StringProperty = fixture.Create<string>(),
                 BoolProperty = fixture.Create<bool>(),
-                DateTimeProperty = fixture.Create<DateTimeOffset>()
+                ConstantProperty = fixture.Create<bool>(),
+                DateTimeProperty = fixture.Create<DateTimeOffset>(),
+                EnumProperty = SomeEnum.B,
+                NullableDateTimeProperty = null,
+                NullableEnumProperty = null,
+                AnotherClassObject = null,
             };
             dbContext.Set<SomeClass>().Add(savedEntity);
             await dbContext.SaveChangesAsync();
@@ -121,14 +150,17 @@ namespace School.Audit._Db.Tests
             var modifiedEntity = await dbContext.Set<SomeClass>().FirstAsync(c => c.Id == savedEntity.Id);
             modifiedEntity.IntProperty = fixture.Create<int>();
             modifiedEntity.StringProperty = fixture.Create<string>();
-            modifiedEntity.BoolProperty = fixture.Create<bool>();
+            modifiedEntity.BoolProperty = !savedEntity.BoolProperty;
             modifiedEntity.DateTimeProperty = fixture.Create<DateTimeOffset>();
+            modifiedEntity.EnumProperty = SomeEnum.A;
+            modifiedEntity.NullableDateTimeProperty = fixture.Create<DateTimeOffset>();
+            modifiedEntity.NullableEnumProperty = SomeEnum.A;
 
             dbContext.Set<SomeClass>().Update(modifiedEntity);
 
             var changes = changeTracker.GetChanges();
             
-            changes.Length.Should().Be(4);
+            changes.Length.Should().Be(7);
             
             changes
                 .All(c =>
@@ -158,6 +190,33 @@ namespace School.Audit._Db.Tests
                 c.OldValue == savedEntity.DateTimeProperty.ToString()
                 & c.NewValue == modifiedEntity.DateTimeProperty.ToString()
                 && c.ChangedPropertyName == nameof(SomeClass.DateTimeProperty));
+            
+            changes.Should().ContainSingle(c =>
+                c.OldValue == savedEntity.EnumProperty.ToString()
+                & c.NewValue == modifiedEntity.EnumProperty.ToString()
+                && c.ChangedPropertyName == nameof(SomeClass.EnumProperty));
+            
+            var oldNullableDateTimePropertyValue = (savedEntity.NullableDateTimeProperty.HasValue
+                ? savedEntity.NullableDateTimeProperty.ToString()
+                : null);
+            var newNullableDateTimePropertyValue = (modifiedEntity.NullableDateTimeProperty.HasValue
+                ? modifiedEntity.NullableDateTimeProperty.ToString()
+                : null);
+            changes.Should().ContainSingle(c =>
+                c.OldValue == oldNullableDateTimePropertyValue
+                & c.NewValue == newNullableDateTimePropertyValue
+                && c.ChangedPropertyName == nameof(SomeClass.NullableDateTimeProperty));
+            
+            var oldNullableEnumPropertyValue = (savedEntity.NullableEnumProperty.HasValue
+                ? savedEntity.NullableEnumProperty.ToString()
+                : null);
+            var newNullableEnumPropertyValue = (modifiedEntity.NullableEnumProperty.HasValue
+                ? modifiedEntity.NullableEnumProperty.ToString()
+                : null);
+            changes.Should().ContainSingle(c =>
+                c.OldValue == oldNullableEnumPropertyValue
+                & c.NewValue == newNullableEnumPropertyValue
+                && c.ChangedPropertyName == nameof(SomeClass.NullableEnumProperty));
         }
         
         [Fact]
@@ -170,7 +229,11 @@ namespace School.Audit._Db.Tests
                 IntProperty = fixture.Create<int>(),
                 StringProperty = fixture.Create<string>(),
                 BoolProperty = fixture.Create<bool>(),
-                DateTimeProperty = fixture.Create<DateTimeOffset>()
+                DateTimeProperty = fixture.Create<DateTimeOffset>(),
+                EnumProperty = SomeEnum.B,
+                NullableDateTimeProperty = null,
+                NullableEnumProperty = null,
+                AnotherClassObject = null,
             };
             dbContext.Set<SomeClass>().Add(savedEntity);
             await dbContext.SaveChangesAsync();
@@ -184,13 +247,15 @@ namespace School.Audit._Db.Tests
             changes.Length.Should().Be(1);
             
             var item = changes[0];
-            item.OperationType.Should().Be(OperationType.Delete);
-            item.NewValue.Should().BeNull();
-            item.OldValue.Should().BeNull();
-            item.TargetType.Should().Be(typeof(SomeClass).ToString());
-            item.ChangedPropertyName.Should().BeNull();
-            item.KeyPropertyValue.Should().Be(savedEntity.Id.ToString());
-            item.Date.Should().NotBe(default);
+            item.Should().Match<AuditItem>(i => 
+                i.OperationType == OperationType.Delete
+                && i.NewValue == null
+                && i.OldValue == null
+                && i.TargetType == typeof(SomeClass).ToString()
+                && i.ChangedPropertyName == null
+                && i.KeyPropertyValue == savedEntity.Id.ToString()
+                && i.Date != default
+            );
         }
 
         private ChangesProvider<DbContext> GetInstance(out TestDbContext dbContext)
@@ -201,9 +266,13 @@ namespace School.Audit._Db.Tests
                 .Add<SomeClass>(nameof(SomeClass.Id))
                 .AddProperties(
                     nameof(SomeClass.BoolProperty),
+                    nameof(SomeClass.ConstantProperty),
                     nameof(SomeClass.IntProperty),
                     nameof(SomeClass.StringProperty),
-                    nameof(SomeClass.DateTimeProperty));
+                    nameof(SomeClass.DateTimeProperty),
+                    nameof(SomeClass.EnumProperty),
+                    nameof(SomeClass.NullableEnumProperty),
+                    nameof(SomeClass.NullableDateTimeProperty));
             
             // Configure db
             var optionsBuilder = new DbContextOptionsBuilder<TestDbContext>()

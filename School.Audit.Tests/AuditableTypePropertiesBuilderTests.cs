@@ -78,7 +78,7 @@ namespace School.Audit.Tests
 
             func.Should()
                 .Throw<ArgumentException>()
-                .Where(e => e.Message.Contains("invalid type", StringComparison.OrdinalIgnoreCase));
+                .Where(e => e.Message.Contains("should be", StringComparison.OrdinalIgnoreCase));
         }
         
         [Fact]

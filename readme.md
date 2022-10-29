@@ -18,9 +18,10 @@
 
 Для настройки аудита какой-либо сущности потребуется:
 - Подключить библиотеку `School.Audit.Db`
-- Указать сущность, ее ключ и свойства, которые необходимо аудировать
 - Создать таблицу в БД (скрипт для postgresql находится в `src\School.Audit.Db\sql`)
+- Указать конфигурацию элемента аудита `DbAuditConfiguration` в `OnModelCreating`
 - Вызвать `IChangesDbTrackingManager.AddChanges` перед сохранением в БД
+- Указать сущности, ее ключ и свойства, которые необходимо аудировать
 
 ## Пример
 Регистрация осуществляется через `IServiceCollection`
@@ -37,7 +38,7 @@ services.AddDbAudit<MyDbContext>(builder =>
     }
 );
 ```
-
+Добавление аудируемых объектов/полей в контекст:
 ```cs 
 internal class MyDbContext : DbContext
 {
@@ -49,5 +50,13 @@ internal class MyDbContext : DbContext
 
         return base.SaveChangesAsync(cancellationToken);
     }
+}
+```
+Указание конфигурации элемента аудита
+```cs 
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+	...
+	modelBuilder.ApplyConfiguration(new DbAuditConfiguration());
 }
 ```

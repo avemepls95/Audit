@@ -9,6 +9,7 @@ using School.Audit.Models;
 
 namespace School.Audit.Db.Implementation
 {
+    /// <inheritdoc />
     internal class ChangesProvider<TDbContext> : IChangesProvider where TDbContext : DbContext
     {
         private readonly TDbContext _dbContext;
@@ -20,6 +21,7 @@ namespace School.Audit.Db.Implementation
             _auditableTypes = auditableTypes;
         }
 
+        /// <inheritdoc />
         public bool IsAnyChanges()
         {
             if (!_dbContext.ChangeTracker.AutoDetectChangesEnabled)
@@ -33,6 +35,7 @@ namespace School.Audit.Db.Implementation
             return changedAuditableEntriesCount != 0;
         }
 
+        /// <inheritdoc />
         public AuditItem[] GetChanges()
         {
             if (!IsAnyChanges())

@@ -4,10 +4,12 @@ using School.Audit.AuditConfig.Abstractions;
 
 namespace School.Audit.AuditConfig
 {
+    /// <inheritdoc />
     internal class AuditableTypesBuilder : IAuditableTypesBuilder
     {
         public AuditableTypes Types { get; } = new();
 
+        /// <inheritdoc />
         public IAuditableTypePropertiesBuilder<T> Add<T>(string keyPropertyName) where T : class
         {
             var type = typeof(T);
@@ -17,6 +19,7 @@ namespace School.Audit.AuditConfig
             return new AuditableTypePropertiesBuilder<T>(Types.Get(type));
         }
 
+        /// <inheritdoc />
         public IAuditableTypePropertiesBuilder<T> Add<T>(Expression<Func<T, object>> keyFunc) where T : class
         {
             if (keyFunc.Body is not UnaryExpression { Operand: MemberExpression memberExpression })

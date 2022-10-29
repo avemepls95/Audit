@@ -5,6 +5,7 @@ using School.Audit.Models;
 
 namespace School.Audit.Db.Implementation
 {
+    /// <inheritdoc />
     internal class ChangesDbTrackingManager<TDbContext> : IChangesDbTrackingManager where TDbContext : DbContext
     {
         private readonly TDbContext _dbContext;
@@ -16,6 +17,7 @@ namespace School.Audit.Db.Implementation
             _changesProvider = changesProvider;
         }
 
+        /// <inheritdoc />
         public void AddChanges()
         {
             var isAnyChanges = _changesProvider.IsAnyChanges();

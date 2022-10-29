@@ -6,6 +6,7 @@ using School.Audit.AuditConfig.Abstractions;
 
 namespace School.Audit.AuditConfig
 {
+    /// <inheritdoc />
     internal class AuditableTypePropertiesBuilder<T> : IAuditableTypePropertiesBuilder<T> where T : class
     {
         private readonly AuditableEntityMetaData _auditableEntityMetaData;
@@ -15,6 +16,7 @@ namespace School.Audit.AuditConfig
             _auditableEntityMetaData = auditableEntityMetaData;
         }
         
+        /// <inheritdoc />
         public void AddProperties(params string[] propertyNames)
         {
             if (propertyNames.Length != propertyNames.Distinct().Count())
@@ -33,12 +35,12 @@ namespace School.Audit.AuditConfig
             foreach (var propertyName in propertyNames)
             {
                 var propertyType = allObjectProperties.First(p => p.Name == propertyName).PropertyType;
-                if (propertyType.IsPrimitive || AllowPropertyTypes.IsValid(propertyType))
+                if (propertyType.IsPrimitive || PropertyTypeAllowResolver.IsValid(propertyType))
                 {
                     continue;
                 }
 
-                throw new ArgumentException(AllowPropertyTypes.ErrorMessage);
+                throw new ArgumentException(PropertyTypeAllowResolver.ErrorMessage);
             }
 
             var allPropertyNames = _auditableEntityMetaData.PropertyNames?.ToList() ?? new List<string>();
@@ -52,6 +54,7 @@ namespace School.Audit.AuditConfig
             _auditableEntityMetaData.PropertyNames = allPropertyNames.ToArray();
         }
         
+        /// <inheritdoc />
         public IAuditableTypePropertiesBuilder<T> AddProperty<TProperty>(Expression<Func<T, TProperty>> propertyFunc)
         {
             if (propertyFunc.Body is not MemberExpression memberExpression)
@@ -64,6 +67,7 @@ namespace School.Audit.AuditConfig
             return this;
         }
         
+        /// <inheritdoc />
         public IAuditableTypePropertiesBuilder<T> AddProperties(params Expression<Func<T, object>>[] propertyFunctions)
         {
             foreach (var propertyFunc in propertyFunctions)
@@ -82,11 +86,12 @@ namespace School.Audit.AuditConfig
             return this;
         }
         
+        /// <inheritdoc />
         public void AddAllProperties()
         {
             var allPropertyNamesExcludeKey = typeof(T).GetProperties()
                 .Where(p =>
-                    AllowPropertyTypes.IsValid(p.PropertyType)
+                    PropertyTypeAllowResolver.IsValid(p.PropertyType)
                     && !p.Name.Equals(_auditableEntityMetaData.KeyPropertyName))
                 .Select(p => p.Name)
                 .ToArray();
